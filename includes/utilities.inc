@@ -703,6 +703,20 @@ function islandora_serial_object_get_tree_view(AbstractObject $object) {
   if (!empty($json['data'])) {
     $module_path = drupal_get_path('module', 'islandora_serial_object');
     $library_path = libraries_get_path('jstree');
+    $form['expend_all'] = array(
+      '#type' => 'button',
+      '#value' => t('Expand all'),
+      '#attributes' => array(
+        'class' => array('islandora_serial_object_tree_expand_all'),
+      ),
+    );
+    $form['collapse_all'] = array(
+      '#type' => 'button',
+      '#value' => t('Collapse all'),
+      '#attributes' => array(
+        'class' => array('islandora_serial_object_tree_close_all'),
+      ),
+    );
     $form['serial_object_tree'] = array(
       '#markup' => '<div id="islandora_serial_object_tree_view"></div>',
     );
@@ -724,20 +738,7 @@ function islandora_serial_object_get_tree_view(AbstractObject $object) {
       'data' => array('islandora_serial_object' => $json),
       'type' => 'setting',
     );
-    $form['expend_all'] = array(
-      '#type' => 'button',
-      '#value' => t('Expand all'),
-      '#attributes' => array(
-        'class' => array('islandora_serial_object_tree_expand_all'),
-      ),
-    );
-    $form['collapse_all'] = array(
-      '#type' => 'button',
-      '#value' => t('Collapse all'),
-      '#attributes' => array(
-        'class' => array('islandora_serial_object_tree_close_all'),
-      ),
-    );
+    
     /*$form['description'] = array(
       '#type' => 'item',
       '#markup' => t('Left click to navigate to the object.'),
