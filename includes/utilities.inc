@@ -426,8 +426,12 @@ function islandora_serial_object_build_flat_structure_from_tree($tree, $flat_str
       $mods_data = islandora_serial_object_retrieve_mods_data($vals, $levels[$depth]['type']);
       $default_edit = ($mods_data['caption'] == $levels[$depth]['caption']) ? TRUE : FALSE;
       $results[$flat_structure[$vals]['pid']][$vals] = $flat_structure[$vals];
-      $results[$flat_structure[$vals]['pid']][$vals]['caption'] = $mods_data['caption'];
-      $results[$flat_structure[$vals]['pid']][$vals]['number'] = $mods_data['number'];
+      if($mods_data['caption']){
+        $results[$flat_structure[$vals]['pid']][$vals]['caption'] = $mods_data['caption'];
+      }
+      if($mods_data['number']){
+        $results[$flat_structure[$vals]['pid']][$vals]['number'] = $mods_data['number'];
+      }
       $results[$flat_structure[$vals]['pid']][$vals]['default_edit'] = $default_edit;
       $results[$flat_structure[$vals]['pid']][$vals]['default_type'] = htmlspecialchars($levels[$depth]['type']);
     }
