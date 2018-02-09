@@ -131,7 +131,11 @@ function islandora_serial_object_pdf_management_form_submit($form, &$form_state)
 function islandora_serial_object_ingest_pdf_page_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   module_load_include('inc', 'islandora_basic_collection', 'includes/ingest.form');
-  $parent = islandora_object_load('islandora:sp_pdf_collection');
+  module_load_include('inc', 'islandora_usage_stats', 'includes/utilities');
+  $parents = islandora_usage_stats_find_all_level_parents($object->id,0);
+  $parentCol = end($parents);
+  #$parent = islandora_object_load('islandora:sp_pdf_collection');
+  $parent = islandora_object_load($parentCol['parent_id']);
   $config = islandora_basic_collection_get_ingest_configuration($parent);
   $config['models'] = array('islandora:sp_pdf');
   $config['islandora_serial_object_intermediate_pdf_parent'] = $object->id;
@@ -181,7 +185,7 @@ function islandora_serial_object_associate_pdf(&$form_state, $parent_id) {
     $parent_id
   );
   // Need to remove the existing collection relationship.
-  $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:sp_pdf_collection');
+  $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection');
   $object->relationships->add(
     ISLANDORA_RELS_EXT_URI,
     ISLANDORA_SERIAL_OBJECT_SEQUENCE_PREDICATE,
