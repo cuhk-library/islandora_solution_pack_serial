@@ -111,9 +111,15 @@ class IslandoraSerialObjectZipPDFBatchImportObject extends ZipBatchImportObject 
    * @see IslandoraImportObject::modifyRelationships()
    */
   public function modifyRelationships(AbstractObject $object) {
+    module_load_include('inc', 'islandora_usage_stats', 'includes/utilities');
+    $parents = islandora_usage_stats_find_all_level_parents($this->source['parent_pid'],0);
+    $parentCol = end($parents);
+    $parentJournal = $parents[count($parents)-2];
     parent::modifyRelationships($object);
     $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection');
     $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_PARENT_PREDICATE, $this->source['parent_pid']);
     $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_SEQUENCE_PREDICATE, $this->source['sequence_number'], RELS_TYPE_INT);
+    $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_COLLECTION, $parentCol['parent_id']);
+    $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_JOURNAL_COLLECTION, $parentJournal['parent_id']);
   }
 }

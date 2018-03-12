@@ -131,7 +131,11 @@ function islandora_serial_object_pdf_management_form_submit($form, &$form_state)
 function islandora_serial_object_ingest_pdf_page_callback(AbstractObject $object) {
   module_load_include('inc', 'islandora', 'includes/ingest.form');
   module_load_include('inc', 'islandora_basic_collection', 'includes/ingest.form');
-  $parent = islandora_object_load('islandora:sp_pdf_collection');
+  module_load_include('inc', 'islandora_usage_stats', 'includes/utilities');
+  $parents = islandora_usage_stats_find_all_level_parents($object->id,0);
+  $parentCol = end($parents);
+  #$parent = islandora_object_load('islandora:sp_pdf_collection');
+  $parent = islandora_object_load($parentCol['parent_id']);
   $config = islandora_basic_collection_get_ingest_configuration($parent);
   $config['models'] = array('islandora:sp_pdf');
   $config['islandora_serial_object_intermediate_pdf_parent'] = $object->id;
@@ -175,19 +179,24 @@ function islandora_serial_object_associate_pdf(&$form_state, $parent_id) {
   module_load_include('inc', 'islandora_serial_object', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
   $sequence_number = islandora_serial_object_get_max_sequence_number($parent_id) + 1;
+  $parents = islandora_usage_stats_find_all_level_parents($parent_id,0);
+  $parentCol = end($parents);
+  $parentJournal = $parents[count($parents)-2];
   $object->relationships->add(
     ISLANDORA_RELS_EXT_URI,
     ISLANDORA_SERIAL_OBJECT_PDF_PARENT_PREDICATE,
     $parent_id
   );
   // Need to remove the existing collection relationship.
-  $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:sp_pdf_collection');
+  $object->relationships->remove(FEDORA_RELS_EXT_URI, 'isMemberOfCollection');
   $object->relationships->add(
     ISLANDORA_RELS_EXT_URI,
     ISLANDORA_SERIAL_OBJECT_SEQUENCE_PREDICATE,
     $sequence_number,
     RELS_TYPE_INT
   );
+  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_COLLECTION, $parentCol['parent_id']);
+  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_JOURNAL_COLLECTION, $parentJournal['parent_id']);
   $form_state['redirect'] = "islandora/object/$parent_id/manage/serial-pdf-management";
 }
 

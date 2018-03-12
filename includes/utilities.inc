@@ -430,16 +430,32 @@ function islandora_serial_object_build_flat_structure_from_tree($tree, $flat_str
     if (is_array($vals)) {
       $results[$flat_structure[$branch]['pid']][$branch] = $flat_structure[$branch];
       $mods_data = islandora_serial_object_retrieve_mods_data($branch, $levels[$depth]['type']);
-      $default_edit = ($mods_data['caption'] == $levels[$depth]['caption']) ? TRUE : FALSE;
-      $results[$flat_structure[$branch]['pid']][$branch]['caption'] = $mods_data['caption'];
-      $results[$flat_structure[$branch]['pid']][$branch]['number'] = $mods_data['number'];
+      if(isset($mods_data['caption']) && isset($levels[$depth]['caption'])){
+        $default_edit = ($mods_data['caption'] == $levels[$depth]['caption']) ? TRUE : FALSE;
+      }else{
+        $default_edit = FALSE;
+      }
+      if(isset($mods_data['caption'])){
+        $results[$flat_structure[$branch]['pid']][$branch]['caption'] = $mods_data['caption'];
+      }else{
+        $results[$flat_structure[$branch]['pid']][$branch]['caption'] = NULL;  
+      }
+      if(isset($mods_data['number'])){
+        $results[$flat_structure[$branch]['pid']][$branch]['number'] = $mods_data['number'];
+      }else{
+        $results[$flat_structure[$branch]['pid']][$branch]['number'] = NULL;  
+      }
       $results[$flat_structure[$branch]['pid']][$branch]['default_edit'] = $default_edit;
       $results[$flat_structure[$branch]['pid']][$branch]['default_type'] = htmlspecialchars($levels[$depth]['type']);
       islandora_serial_object_build_flat_structure_from_tree($vals, $flat_structure, $results, $parent_pid, $depth + 1);
     }
     else {
       $mods_data = islandora_serial_object_retrieve_mods_data($vals, $levels[$depth]['type']);
-      $default_edit = ($mods_data['caption'] == $levels[$depth]['caption']) ? TRUE : FALSE;
+      if(isset($mods_data['caption']) && isset($levels[$depth]['caption'])){
+        $default_edit = ($mods_data['caption'] == $levels[$depth]['caption']) ? TRUE : FALSE;
+      }else{
+        $default_edit = FALSE;
+      }
       $results[$flat_structure[$vals]['pid']][$vals] = $flat_structure[$vals];
       if(isset($mods_data['caption'])){
         $results[$flat_structure[$vals]['pid']][$vals]['caption'] = $mods_data['caption'];
