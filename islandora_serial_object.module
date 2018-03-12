@@ -19,6 +19,7 @@ define('ISLANDORA_SERIAL_OBJECT_MODS_NUMBER_XPATH', ISLANDORA_SERIAL_OBJECT_MODS
 
 // Collection ID
 define('ISLANDORA_SERIAL_OBJECT_PDF_COLLECTION', 'isCollectionOf');
+define('ISLANDORA_SERIAL_OBJECT_PDF_JOURNAL_COLLECTION', 'isJournalMemberOf');
 
 /**
  * Implements hook_islandora_required_objects().

@@ -179,6 +179,9 @@ function islandora_serial_object_associate_pdf(&$form_state, $parent_id) {
   module_load_include('inc', 'islandora_serial_object', 'includes/utilities');
   $object = islandora_ingest_form_get_object($form_state);
   $sequence_number = islandora_serial_object_get_max_sequence_number($parent_id) + 1;
+  $parents = islandora_usage_stats_find_all_level_parents($parent_id,0);
+  $parentCol = end($parents);
+  $parentJournal = $parents[count($parents)-2];
   $object->relationships->add(
     ISLANDORA_RELS_EXT_URI,
     ISLANDORA_SERIAL_OBJECT_PDF_PARENT_PREDICATE,
@@ -192,6 +195,8 @@ function islandora_serial_object_associate_pdf(&$form_state, $parent_id) {
     $sequence_number,
     RELS_TYPE_INT
   );
+  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_COLLECTION, $parentCol['parent_id']);
+  $object->relationships->add(ISLANDORA_RELS_EXT_URI, ISLANDORA_SERIAL_OBJECT_PDF_JOURNAL_COLLECTION, $parentJournal['parent_id']);
   $form_state['redirect'] = "islandora/object/$parent_id/manage/serial-pdf-management";
 }
 
